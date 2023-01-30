@@ -13,7 +13,7 @@ class GameBoard extends JPanel {
     private final GameFrame game;
     public boolean crossTurn;
 
-    public int unitSideDiameter = 15;
+    public int unitSideDiameter = 3;
 
     GameBoard(GameFrame game) {
         this.game = game;
