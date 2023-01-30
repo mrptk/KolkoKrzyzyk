@@ -1,4 +1,4 @@
-package gui;
+package assets;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,23 +12,23 @@ public class GameFrame extends JFrame{
     public GameFrame() {
         init();
     }
-    public void changeSize(int m, int n) {
-        setSize(m, n);
+
+    public void changeMsg(String newMsg) {
+        header.setText(newMsg);
     }
 
     private void init() {
         setTitle("Kółko i krzyżyk");
-        setSize(400, 400);
-        setLayout(new FlowLayout());
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        header = new JLabel("Hello");
+        header = new JLabel();
+        add(header);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
                 System.exit(0);
             }
         });
-        add(header);
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
@@ -36,6 +36,5 @@ public class GameFrame extends JFrame{
 
         GameBoard gb = new GameBoard(this);
         controlPanel.add(gb);
-
     }
 }
