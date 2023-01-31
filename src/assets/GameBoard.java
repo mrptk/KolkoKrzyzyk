@@ -1,6 +1,7 @@
 package assets;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.Objects;
 import java.util.Random;
@@ -18,6 +19,7 @@ class GameBoard extends JPanel {
     GameBoard(GameFrame game) {
         this.game = game;
         Random rand = new Random();
+
         this.crossTurn = rand.nextDouble() < 0.5;
         changeTurn();
 

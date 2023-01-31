@@ -2,7 +2,7 @@ import assets.GameFrame;
 
 import java.awt.*;
 
-public class Test {
+public class TestClient1 {
 
     public static void main(String[] args) {
 

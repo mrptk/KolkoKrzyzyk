@@ -20,7 +20,6 @@ public class GameFrame extends JFrame{
     private void init() {
         setTitle("Kółko i krzyżyk");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         header = new JPanel();
         header.setLayout(new FlowLayout());
@@ -35,7 +34,13 @@ public class GameFrame extends JFrame{
         controlPanel.setLayout(new FlowLayout());
         add(controlPanel);
 
-        GameBoard gb = new GameBoard(this);
+        final GameBoard gb = new GameBoard(this);
         controlPanel.add(gb);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent){
+                System.exit(0);
+            }
+        });
     }
 }

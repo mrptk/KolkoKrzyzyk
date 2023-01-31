@@ -3,7 +3,7 @@ package assets;
 import javax.swing.*;
 import java.awt.*;
 
-public class GameUnit extends JButton {
+class GameUnit extends JButton {
     public final GameBoard board;
     private boolean clicked;
     private boolean cross;

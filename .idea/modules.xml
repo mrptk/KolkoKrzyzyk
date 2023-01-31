@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/KolkoKrzyzyk.iml" filepath="$PROJECT_DIR$/KolkoKrzyzyk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KolkoKrzyzykClient.iml" filepath="$PROJECT_DIR$/KolkoKrzyzykClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KolkoKrzyzykServer/KolkoKrzyzykServer.iml" filepath="$PROJECT_DIR$/KolkoKrzyzykServer/KolkoKrzyzykServer.iml" />
     </modules>
   </component>
 </project>
