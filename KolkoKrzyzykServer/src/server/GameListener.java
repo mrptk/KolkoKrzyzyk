@@ -38,13 +38,12 @@ class GameListener extends Thread {
             try {
                 socket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
-                String[] receivedParsed = received.split(" ");
 
-                if (receivedParsed[0].equals("handshake")) {
+                if (received.equals("handshake")) {
                     player = new GameUser(packet.getAddress(), packet.getPort());
                     respond("" + isCross);
                     gameServer.startUpdater();
-                } else if (game.isCrossTurn() && isCross) game.updateGame(receivedParsed);
+                } else game.updateGame(received, isCross);
 
                 buf = new byte[4096];
 

@@ -8,15 +8,15 @@ import java.net.SocketException;
 
 class GameUpdater extends Thread {
     private GameServer server;
-    private InetAddress[] playerAddresses;
+    private InetAddress playerAddress;
     private DatagramSocket socket;
     private int port;
     private byte[] buf = new byte[4096];
     private boolean running;
 
-    public GameUpdater(GameServer server, int port, InetAddress[] playerAddresses){
+    public GameUpdater(GameServer server, int port, InetAddress playerAddresses){
         this.server = server;
-        this.playerAddresses = playerAddresses;
+        this.playerAddress = playerAddresses;
         this.port = port;
         try {
             this.socket = new DatagramSocket();
@@ -33,10 +33,10 @@ class GameUpdater extends Thread {
             try {
                 buf = server.game.getGameData().getBytes();
 
-                DatagramPacket packetOne = new DatagramPacket(buf, buf.length, playerAddresses[0], port);
+                DatagramPacket packetOne = new DatagramPacket(buf, buf.length, playerAddress, port);
 
                 socket.send(packetOne);
-                sleep(3000);
+                sleep(5000);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
