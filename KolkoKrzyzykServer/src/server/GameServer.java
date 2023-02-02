@@ -2,13 +2,10 @@ package server;
 
 import assets.Game;
 
-import java.net.InetAddress;
 
 public class GameServer {
-    private GameUpdater gameUpdaterOne;
-    private GameUpdater gameUpdaterTwo;
-    private GameListener gameListenerOne;
-    private GameListener gameListenerTwo;
+    private final GameListener gameListenerOne;
+    private final GameListener gameListenerTwo;
     private int activeListeners;
 
     public int[] ports = new int[]{4443, 4444, 4445, 4446};
@@ -30,8 +27,8 @@ public class GameServer {
         activeListeners++;
 
         if (activeListeners >= 2) {
-            gameUpdaterOne = new GameUpdater(this, ports[2], gameListenerOne.getUser().getAddress());
-            gameUpdaterTwo = new GameUpdater(this, ports[3], gameListenerTwo.getUser().getAddress());
+            GameUpdater gameUpdaterOne = new GameUpdater(this, ports[2], gameListenerOne.getUser().getAddress());
+            GameUpdater gameUpdaterTwo = new GameUpdater(this, ports[3], gameListenerTwo.getUser().getAddress());
             gameUpdaterOne.start();
             gameUpdaterTwo.start();
         }

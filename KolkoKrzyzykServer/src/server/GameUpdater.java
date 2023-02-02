@@ -7,12 +7,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 class GameUpdater extends Thread {
-    private GameServer server;
-    private InetAddress playerAddress;
+    private final GameServer server;
+    private final InetAddress playerAddress;
     private DatagramSocket socket;
-    private int port;
-    private byte[] buf = new byte[4096];
-    private boolean running;
+    private final int port;
 
     public GameUpdater(GameServer server, int port, InetAddress playerAddresses){
         this.server = server;
@@ -26,23 +24,21 @@ class GameUpdater extends Thread {
     }
 
     public void run() {
-        running = true;
-        System.out.printf("Socket Updater");
+        System.out.println("Socket Updater");
+        byte[] buf = new byte[4096];
 
-        while (running) {
+        while (true) {
             try {
-                buf = server.game.getGameData().getBytes();
+                buf = server.game.updateAndGetGame("none", false).getBytes();
 
                 DatagramPacket packetOne = new DatagramPacket(buf, buf.length, playerAddress, port);
 
                 socket.send(packetOne);
-                sleep(5000);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+                System.out.println("Updating " + port);
+                sleep(100);
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        socket.close();
     }
 }

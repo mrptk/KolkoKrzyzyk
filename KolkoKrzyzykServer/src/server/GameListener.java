@@ -13,9 +13,8 @@ class GameListener extends Thread {
     private GameUser player;
     private DatagramSocket socket;
     private byte[] buf = new byte[4096];
-    private int port;
-    private boolean running;
-    private boolean isCross;
+    private final int port;
+    private final boolean isCross;
 
     public GameListener(GameServer gameServer, int port, boolean isCross) {
         this.gameServer = gameServer;
@@ -30,7 +29,7 @@ class GameListener extends Thread {
     }
 
     public void run() {
-        running = true;
+        boolean running = true;
         System.out.printf("Socket %d%n", port);
 
         while (running) {
@@ -43,7 +42,11 @@ class GameListener extends Thread {
                     player = new GameUser(packet.getAddress(), packet.getPort());
                     respond("" + isCross);
                     gameServer.startUpdater();
-                } else game.updateGame(received, isCross);
+                } else {
+                    game.updateAndGetGame(received, isCross);
+                    if (game.isFinished()) running = false;
+                    System.out.println("Update from " + port);
+                }
 
                 buf = new byte[4096];
 

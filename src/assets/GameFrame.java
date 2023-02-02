@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GameFrame extends JFrame{
-    private JPanel header, controlPanel;
     private JLabel msg;
     private JLabel turn;
 
@@ -25,7 +24,7 @@ public class GameFrame extends JFrame{
         setTitle("Kółko i krzyżyk");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        header = new JPanel();
+        JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         add(header);
 
@@ -39,7 +38,7 @@ public class GameFrame extends JFrame{
         turn.setVerticalAlignment(SwingConstants.CENTER);
         header.add(turn);
 
-        controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
         add(controlPanel);
 

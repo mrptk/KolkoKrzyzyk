@@ -7,7 +7,7 @@ class GameUnit extends JButton {
     public final GameBoard board;
     private boolean clicked;
     private boolean cross;
-    private int index;
+    private final int index;
 
     GameUnit(GameBoard board, int index) {
         this.board = board;
@@ -19,19 +19,19 @@ class GameUnit extends JButton {
 
         addActionListener(e -> {
             if (!clicked && (board.crossTurn == board.isCross)) {
-                update(board.isCross ? "1" : "2");
                 board.lastChoice = index;
-                board.crossTurn = !board.crossTurn;
                 board.update();
-                board.listen();
             }
         });
     }
 
-    public void update(String val) {
+    public void update(String val, String where) {
         switch (val) {
             case "0":
-                if (clicked) board.setMsg("Desynchronizacja");
+                if (clicked) {
+                    board.setMsg("Desynchronizacja");
+                    System.out.println("Desynchronizacja 0 " + index + " " + where);
+                }
                 break;
             case "1":
                 if (!clicked) {
@@ -39,14 +39,22 @@ class GameUnit extends JButton {
                     cross = true;
                     setIcon(board.crossIcon);
                 }
-                else if (!cross) board.setMsg("Desynchronizacja");
+                else if (!cross) {
+                    board.setMsg("Desynchronizacja");
+                    System.out.println("Desynchronizacja 0 " + index + " " + where);
+                }
+                break;
             case "2":
                 if (!clicked) {
                     clicked = true;
                     cross = false;
                     setIcon(board.circleIcon);
                 }
-                else if (cross) board.setMsg("Desynchronizacja");
+                else if (cross) {
+                    board.setMsg("Desynchronizacja");
+                    System.out.println("Desynchronizacja 0 " + index + " " + where);
+                }
+                break;
         }
     }
 

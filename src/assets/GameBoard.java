@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
@@ -15,16 +16,17 @@ class GameBoard extends JPanel {
     public ImageIcon emptyIcon;
     public ImageIcon crossIcon;
     public ImageIcon circleIcon;
-    private int unitsSideDiameter;
+    private final int unitsSideDiameter;
 
     private final GameFrame game;
-    private GameUnit[] fields;
+    private final GameUnit[] fields;
     public boolean crossTurn;
     public boolean isCross;
     public int lastChoice;
 
-    private int[] ports;
+    private final int[] ports;
     private SwingWorker handshaker, updater, listener;
+    private boolean listen;
 
 
     GameBoard(GameFrame game, int[] ports, int unitsSideDiameter) {
@@ -32,6 +34,7 @@ class GameBoard extends JPanel {
         this.ports = ports;
         this.unitsSideDiameter = unitsSideDiameter;
         this.fields = new GameUnit[unitsSideDiameter * unitsSideDiameter];
+        this.listen = true;
 
         initIcons();
         init();
@@ -56,11 +59,19 @@ class GameBoard extends JPanel {
     }
 
     public void synchronize(String[] gameData) {
-        crossTurn = Boolean.parseBoolean(gameData[0]);
-        game.changeTurn(crossTurn == isCross ? "Teraz ty" : "Teraz przeciwnik");
+        if (gameData[0].equals("finished")) {
+            game.changeMsg("Koniec gry");
+            game.changeTurn(Boolean.parseBoolean(gameData[1]) == isCross ? "Wygrałeś" : "Przegrałeś");
 
-        int gameDataLen = gameData.length;
-        for (int i = 1; i < gameDataLen; i++) fields[i - 1].update(gameData[i]);
+            int gameDataLen = gameData.length;
+            for (int i = 3; i < gameDataLen; i++) fields[i - 3].update(gameData[i], "serv");
+        } else {
+            crossTurn = Boolean.parseBoolean(gameData[0]);
+            game.changeTurn(crossTurn == isCross ? "Teraz ty" : "Teraz przeciwnik");
+
+            int gameDataLen = gameData.length;
+            for (int i = 1; i < gameDataLen; i++) fields[i - 1].update(gameData[i], "serv");
+        }
     }
 
     private void init() {
@@ -101,7 +112,7 @@ class GameBoard extends JPanel {
                     socket.receive(packet);
                     received = new String(
                             packet.getData(), 0, packet.getLength());
-                    System.out.println(received);
+                    System.out.println("handshake " + received + (isCross ? " cross" : " circle"));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -122,9 +133,10 @@ class GameBoard extends JPanel {
     }
 
     private void buildUpdater() {
-        updater = new SwingWorker() {
+        updater = null;
+        updater = new SwingWorker<Void, Void>() {
             @Override
-            protected Object doInBackground() throws Exception {
+            protected Void doInBackground() throws Exception {
                 DatagramSocket socket = new DatagramSocket();
                 byte[] buf = new byte[4096];
                 buf = ("" + lastChoice + " ").getBytes();
@@ -132,6 +144,7 @@ class GameBoard extends JPanel {
                         = new DatagramPacket(buf, buf.length, InetAddress.getByName("localhost"), ports[0]);
                 try {
                     socket.send(packet);
+                    System.out.println("updating " + (isCross ? "cross" : "circle"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -144,20 +157,25 @@ class GameBoard extends JPanel {
         listener = new SwingWorker<String[], String[]>() {
             @Override
             protected String[] doInBackground() throws Exception {
-                boolean stop = false;
                 byte[] buf = new byte[4096];
-                DatagramSocket socket = new DatagramSocket(ports[1]);
-                String[] data = null;
+                String[] data;
+                DatagramSocket listenerSocket = null;
 
-                while (!stop) {
+                try {
+                    listenerSocket = new DatagramSocket(ports[1]);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+
+                while (listen) {
                     String received;
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                    socket.receive(packet);
+                    listenerSocket.receive(packet);
                     received = new String(
                             packet.getData(), 0, packet.getLength());
                     data = received.split(" ");
                     publish(data);
-                    if (Boolean.parseBoolean(data[0]) == isCross) stop = true;
+                    System.out.println("update received " + (isCross ? "cross" : "circle"));
                 }
 
                 return null;

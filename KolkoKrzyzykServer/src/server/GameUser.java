@@ -3,8 +3,8 @@ package server;
 import java.net.InetAddress;
 
 class GameUser {
-    private InetAddress address;
-    private int port;
+    private final InetAddress address;
+    private final int port;
 
     public GameUser(InetAddress address, int port) {
         this.address = address;
